@@ -1,7 +1,7 @@
 import React from 'react';
-import Regular from 'components/Regular/Regular';
-import MuiVersion from 'component/MuiVersion/MuiVersion';
-import 
+import Regular from './components/Regular/Regular.js';
+import MuiVersion from './components/MuiVersion/MuiVersion.js';
+import './App.scss';
 
 function App() {
   return (
