@@ -1,5 +1,5 @@
 {
-  "name": "mernherokutemplate",
+  "name": "imageuploader",
   "version": "1.0.0",
   "description": "A MERN template for deployment to Heroku",
   "author": "Thomas Foydel",
@@ -23,7 +23,9 @@
     "cors": "^2.8.5",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
-    "mongoose": "^5.11.19"
+    "mongoose": "^5.11.19",
+    "multer": "^1.4.2",
+    "multer-gridfs-storage": "^4.2.0"
   },
   "devDependencies": {
     "concurrently": "^6.0.2",

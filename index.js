@@ -2,12 +2,17 @@ const path = require('path');
 const express = require('express');
 const cors = require('cors');
 const mongoose = require('mongoose');
-const app = express();
 require('dotenv').config();
+const imageRoutes = require('./routes/image')
+
+const app = express();
+const port = process.env.PORT || 8000;
+
 app.use(cors());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
-const port = process.env.PORT || 8000;
+
+app.use('/api/image', imageRoutes);
 
 // put your routes here
 // routes should begin with /api/
