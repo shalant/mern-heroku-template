@@ -8,6 +8,9 @@ const multer = require('multer');
 const crypto = require('crypto');
 const path = require('path');
 require('dotenv').config();
+const auth = require('../middlewares/auth');
+const User = require('../models/User');
+const ProfilePicture = require('../models/ProfilePicture');
 
 const mongoURI = process.env.MONGO_URI;
 const conn = mongoose.createConnection(mongoURI, {
@@ -82,6 +85,51 @@ router.post('/upload/', uploadMiddleware, async(req, res) => {
     console.log('uploaded file: ', file);
     return res.send(file.id);
 });
+
+router.post('/change-profilepic/', auth, uploadMiddleware, async(req, res) => {
+    const { file } = req;
+    const { id } = file;
+    const { userId } = req.tokenUser;
+
+    if(file.size > 5000000) {
+        deleteImage(id);
+        return res.status(400).send('file may not exceed 5mb');
+    }
+    
+    const foundUser = await User.findById(userId);
+    if (!foundUser) return res.status(400).send('user not found');
+    let currentPic = foundUser.profilePic;
+
+    const newPic = await ProfilePicture.create({owner: userId, fileId: id});
+    User.findByIdAndUpdate(userId, {
+        profilePic: newPic._id,
+        $push: {previousPictures: currentPic}
+    }, {new: true, useFindAndModify: false})
+        .then(updatedUser => res.send(updatedUser))
+        .catch(() => res.sendStatus(500));
+
+    })
+
+//     if (currentPic) {
+//         let currenPicId;
+//         try {
+//             currentPicId = new mongoose.Types.ObjectId(currentPic);
+//         } catch (err) {
+//             console.log('invalid id: ', currentPic)
+//         }
+//         gfs.delete(currentPicId, (err) => {
+//             if(err) return res.status(500).send('database error')
+//         })
+//     }
+
+//     User.findByIdAndUpdate(
+//         userId, 
+//         { profilePic: id }, 
+//         { useFindAndModify: true, new: true }
+//     )
+//         .then((user) => res.send(user.profilePic))
+//         .catch(() => res.status(500).send('database error'));
+// });
 
 const deleteImage = (id) => {
     if(!id || id === 'undefined') return res.status(400).send('no image id');
